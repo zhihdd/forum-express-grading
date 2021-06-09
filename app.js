@@ -11,6 +11,7 @@ const port = 3000;
 
 app.engine("handlebars", handlebars({ defaultLayout: "main" }));
 app.set("view engine", "handlebars");
+app.use("/upload", express.static(__dirname + "/upload"));
 
 app.use(flash());
 app.use(bodyParser.urlencoded({ extended: true }));
