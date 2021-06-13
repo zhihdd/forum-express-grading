@@ -4,7 +4,7 @@ const bodyParser = require("body-parser");
 const flash = require("connect-flash");
 const session = require("express-session");
 const methodOverride = require("method-override");
-const helpers = require('./_helpers');
+const helpers = require("./_helpers");
 const passport = require("./config/passport");
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
@@ -12,9 +12,15 @@ if (process.env.NODE_ENV !== "production") {
 
 const db = require("./models");
 const app = express();
-const port = process.env.PORT ||3000;
+const port = process.env.PORT || 3000;
 
-app.engine("handlebars", handlebars({ defaultLayout: "main" }));
+app.engine(
+  "handlebars",
+  handlebars({
+    defaultLayout: "main",
+    helpers: require("./config/handlebars-helpers"),
+  })
+);
 app.set("view engine", "handlebars");
 app.use("/upload", express.static(__dirname + "/upload"));
 
