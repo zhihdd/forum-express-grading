@@ -4,7 +4,11 @@ const Category = db.Category;
 let categoryController = {
   getCategories: (req, res) => {
     return Category.findAll({ raw: true, nest: true }).then((categories) => {
-      res.render("admin/categories", { categories });
+      if (req.params.id) {
+        const category = categories.find((item) => item.id === +req.params.id);
+        return res.render("admin/categories", { categories, category });
+      }
+      return res.render("admin/categories", { categories });
     });
   },
 
@@ -28,6 +32,16 @@ let categoryController = {
         })
         .catch((error) => console.log("Error", error));
     });
+  },
+
+  putCategory: (req, res) => {
+    const id = req.params.id;
+    const name = req.body.name;
+    console.log(id, name);
+    return Category.findByPk(id)
+      .then((category) => category.update({ name }))
+      .then(() => res.redirect("/admin/categories"))
+      .catch((error) => console.log("Error", error));
   },
 };
 
