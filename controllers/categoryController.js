@@ -43,6 +43,14 @@ let categoryController = {
       .then(() => res.redirect("/admin/categories"))
       .catch((error) => console.log("Error", error));
   },
+
+  deleteCategory: (req, res) => {
+    const id = req.params.id;
+    return Category.findByPk(id)
+      .then((category) => category.destroy())
+      .then(() => res.redirect("/admin/categories"))
+      .catch((error) => console.log("Error", error));
+  },
 };
 
 module.exports = categoryController;
