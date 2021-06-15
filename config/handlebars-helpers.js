@@ -1,3 +1,5 @@
+const moment = require("moment");
+
 module.exports = {
   ifCond: (a, b, options) => {
     if (a === b) {
@@ -5,5 +7,8 @@ module.exports = {
     } else {
       return options.inverse(this);
     }
+  },
+  moment: (a) => {
+    return moment(a).fromNow();
   },
 };
