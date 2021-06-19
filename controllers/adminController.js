@@ -1,6 +1,8 @@
 const fs = require("fs");
 const db = require("../models");
 const Restaurant = db.Restaurant;
+const User = db.User;
+// const helpers = require('../_helpers');
 const imgur = require("imgur-node-api");
 const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID;
 
@@ -127,6 +129,40 @@ const adminController = {
         res.redirect("/admin/restaurants");
       });
     });
+  },
+
+  getUsers: (req, res) => {
+    User.findAll({ raw: true }).then((users) => {
+      users.forEach((element) => {
+        element.updatedAt = element.updatedAt.toLocaleString();
+      });
+      res.render("admin/restaurants", { users });
+    });
+  },
+
+  toggleAdmin: (req, res) => {
+    const id = req.params.id;
+
+    User.findOne({
+      where: {
+        id,
+      },
+    })
+      .then((user) =>
+        user.update({
+          isAdmin: user.isAdmin ? false : true,
+        })
+      )
+      .then((user) => {
+        req.flash(
+          "success_messages",
+          `Change ${user.name} to ${
+            user.isAdmin ? '"Admin"' : '"User"'
+          } successfully at ${user.updatedAt.toLocaleString()} `
+        );
+        res.redirect("/admin/users");
+      })
+      .catch((e) => console.log(e));
   },
 };
 

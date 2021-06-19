@@ -1,7 +1,7 @@
 const restController = require("../controllers/restController.js");
 const adminController = require("../controllers/adminController");
 const userController = require("../controllers/userController");
-const helpers = require('../_helpers');
+const helpers = require("../_helpers");
 const multer = require("multer");
 const upload = multer({ dest: "temp/" });
 
@@ -68,6 +68,12 @@ module.exports = (app, passport) => {
     adminController.deleteRestaurant
   );
 
+  app.get("/admin/users", authenticatedAdmin, adminController.getUsers);
+  app.put(
+    "/admin/users/:id/toggleAdmin",
+    authenticatedAdmin,
+    adminController.toggleAdmin
+  );
   app.get("/signup", userController.signUpPage);
   app.post("/signup", userController.signUp);
 
