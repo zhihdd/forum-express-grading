@@ -5,6 +5,7 @@ const Category = db.Category;
 const User = db.User;
 // const helpers = require('../_helpers');
 const imgur = require("imgur-node-api");
+const { Console } = require("console");
 const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID;
 
 const adminController = {
@@ -32,6 +33,7 @@ const adminController = {
     }
 
     const { file } = req;
+    console.log(file)
     if (file) {
       imgur.setClientID(IMGUR_CLIENT_ID);
       imgur.upload(file.path, (err, img) => {

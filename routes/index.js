@@ -113,6 +113,7 @@ module.exports = (app, passport) => {
     categoryController.deleteCategory
   );
 
+  //users
   app.get("/signup", userController.signUpPage);
   app.post("/signup", userController.signUp);
 
@@ -126,4 +127,13 @@ module.exports = (app, passport) => {
     userController.signIn
   );
   app.get("/logout", userController.logout);
+
+  app.get("/users/:id", authenticated, userController.getUser);
+  app.get("/users/:id/edit", authenticated, userController.editUser);
+  app.put(
+    "/users/:id",
+    authenticated,
+    upload.single("image"),
+    userController.putUser
+  );
 };

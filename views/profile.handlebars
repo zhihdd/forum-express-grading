@@ -1,0 +1,9 @@
+        <div class="card flex-row row w-100" style="width: 18rem;">
+          <img src="{{user.image}}" class="col-4 p-2 rounded" alt="...">
+          <div class="card-body col-8 d-flex flex-column">
+            <h2 class="card-title mb-3">{{user.name}}</h5>
+            <p class="card-text">{{user.email}}
+            </p>
+            <a href="/users/{{user.id}}/edit" class="btn btn-primary w-25 mt-auto mr-auto">edit</a>
+          </div>
+        </div>

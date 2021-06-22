@@ -23,6 +23,8 @@ app.engine(
 );
 app.set("view engine", "handlebars");
 app.use("/upload", express.static(__dirname + "/upload"));
+app.use("/public", express.static(__dirname + "/public"));
+
 
 app.use(flash());
 app.use(bodyParser.urlencoded({ extended: true }));
