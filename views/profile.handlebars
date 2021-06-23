@@ -1,4 +1,4 @@
-        <div class="card flex-row row w-100" style="width: 18rem;">
+        <div class="card flex-row row w-100 no-gutters mb-5" style="width: 18rem;">
           <img src="{{user.image}}" class="col-4 p-2 rounded" alt="...">
           <div class="card-body col-8 d-flex flex-column">
             <h2 class="card-title mb-3">{{user.name}}</h5>
@@ -7,3 +7,17 @@
             <a href="/users/{{user.id}}/edit" class="btn btn-primary w-25 mt-auto mr-auto">edit</a>
           </div>
         </div>
+      <div class="card w-100">
+        <div class="card-header">
+          {{totalComments}}  已評論餐廳
+        </div>
+        <ul class="row no-gutters card-body list-unstyled">
+          {{#each restaurants}}
+          <li class="col-2">
+            <a href="/restaurants/{{this.id}}">
+            <img class="container-fluid" src="{{this.image}}"  alt="">
+            </a>
+          </li>
+          {{/each}}
+        </ul>
+      </div>

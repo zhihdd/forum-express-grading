@@ -1,6 +1,8 @@
 const bcrypt = require("bcryptjs");
 const db = require("../models");
 const User = db.User;
+const Comment = db.Comment;
+const Restaurant = db.Restaurant;
 const imgur = require("imgur-node-api");
 const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID;
 
@@ -54,9 +56,25 @@ const userController = {
   },
 
   getUser: (req, res) => {
-    return User.findByPk(req.params.id).then((user) =>
-      res.render("profile", { user: user.toJSON()})
-    );
+    return User.findByPk(req.params.id, {
+      include: [{ model: Comment, include: [Restaurant] }],
+    }).then((user) => {
+      user = user.toJSON();
+      const comments = user.Comments;
+      const totalComments = comments.length;
+      const restaurantIndex = {};
+      comments.forEach((element) => {
+        if (!restaurantIndex[element.RestaurantId]) {
+          restaurantIndex[element.RestaurantId] = element.Restaurant;
+        }
+      });
+      const restaurants = comments
+        .map((item) => item.RestaurantId)
+        .filter((item, index, arr) => arr.indexOf(item) === index)
+        .sort((a, b) => a - b)
+        .map((item) => restaurantIndex[item]);
+      res.render("profile", { user, totalComments, restaurants });
+    });
   },
 
   editUser: (req, res) => {
@@ -69,7 +87,7 @@ const userController = {
     if (!req.body.name) {
       req.flash("error_messages", "Name 不可為空白");
       return res.redirect("back");
-    };
+    }
 
     const { file } = req;
     if (file) {
