@@ -26,7 +26,9 @@ module.exports = (app, passport) => {
 
   app.get("/", authenticated, (req, res) => res.redirect("/restaurants"));
   app.get("/restaurants", authenticated, restController.getRestaurants);
+  app.get("/restaurants/feeds", authenticated, restController.getFeeds);
   app.get("/restaurants/:id", authenticated, restController.getRestaurant);
+
 
   app.post("/comments", authenticated, commentController.postComment);
   app.delete(
@@ -113,10 +115,6 @@ module.exports = (app, passport) => {
     categoryController.deleteCategory
   );
 
-<<<<<<< HEAD
-=======
-  //users
->>>>>>> A19
   app.get("/signup", userController.signUpPage);
   app.post("/signup", userController.signUp);
 
