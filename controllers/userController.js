@@ -73,7 +73,7 @@ const userController = {
         .filter((item, index, arr) => arr.indexOf(item) === index)
         .sort((a, b) => a - b)
         .map((item) => restaurantIndex[item]);
-      res.render("profile", { user, totalComments, restaurants });
+      res.render("profile", { profile: user, totalComments, restaurants });
     });
   },
 
@@ -84,6 +84,10 @@ const userController = {
   },
 
   putUser: (req, res) => {
+    if (+req.params.id !== +req.user.id) {
+      req.flash("error_messages", "無權限修改");
+      return res.redirect("back");
+    }
     if (!req.body.name) {
       req.flash("error_messages", "Name 不可為空白");
       return res.redirect("back");
