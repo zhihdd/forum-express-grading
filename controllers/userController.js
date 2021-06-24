@@ -137,8 +137,9 @@ const userController = {
     })
       .then(favorite =>
         favorite.destroy()
-      )
-      .then(restaurant => res.redirect("back"));
+          .then(restaurant => res.redirect("back"))
+      );
+      
   }
 
 };
