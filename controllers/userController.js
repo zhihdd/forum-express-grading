@@ -4,6 +4,7 @@ const User = db.User;
 const Comment = db.Comment;
 const Restaurant = db.Restaurant;
 const Favorite = db.Favorite;
+const Like = db.Like;
 const imgur = require("imgur-node-api");
 const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID;
 
@@ -143,7 +144,52 @@ const userController = {
         favorite.destroy()
           .then(restaurant => res.redirect("back"))
       );
-      
+
+  },
+
+  addLike: (req, res) => {
+    return Like.findOne({
+      where: {
+        UserId: req.user.id,
+        RestaurantId: req.params.restaurantId
+      },
+      include: [Restaurant]
+    })
+      .then(like => {
+        if (like) {
+          console.log(like);
+          req.flash("error_messages", `Already Like Restaurant : : ${like.Restaurant.name}`);
+          return res.redirect("back");
+        }
+
+        return Like.create({
+          UserId: req.user.id,
+          RestaurantId: req.params.restaurantId
+        })
+          .then(() => Restaurant.findByPk(req.params.restaurantId)
+            .then(restaurant => {
+              req.flash("success_messages", `Like  Restaurant : ${restaurant.name}<3`);
+              res.redirect("back");
+            })
+          )
+      })
+  },
+
+  removeLike: (req, res) => {
+    return Like.findOne({
+      where: {
+        UserId: req.user.id,
+        RestaurantId: req.params.restaurantId,
+      },
+      include: [Restaurant]
+    })
+      .then(like =>
+        like.destroy()
+          .then(() => {
+            req.flash("error_messages", `Unlike Restaurant : ${like.Restaurant.name}`);
+            res.redirect("back")
+          })
+      );
   }
 
 };
