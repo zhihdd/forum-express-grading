@@ -129,50 +129,50 @@ const userController = {
   addFavorite: (req, res) => {
     return Favorite.create({
       UserId: req.user.id,
-      RestaurantId: req.params.restaurantId
-    })
-      .then(restaurant => res.redirect("back"));
+      RestaurantId: req.params.restaurantId,
+    }).then((restaurant) => res.redirect("back"));
   },
   removeFavorite: (req, res) => {
     return Favorite.findOne({
       where: {
         RestaurantId: req.params.restaurantId,
-        UserId: req.user.id
-      }
-    })
-      .then(favorite =>
-        favorite.destroy()
-          .then(restaurant => res.redirect("back"))
-      );
-
+        UserId: req.user.id,
+      },
+    }).then((favorite) =>
+      favorite.destroy().then((restaurant) => res.redirect("back"))
+    );
   },
 
   addLike: (req, res) => {
     return Like.findOne({
       where: {
         UserId: req.user.id,
-        RestaurantId: req.params.restaurantId
+        RestaurantId: req.params.restaurantId,
       },
-      include: [Restaurant]
-    })
-      .then(like => {
-        if (like) {
-          console.log(like);
-          req.flash("error_messages", `Already Like Restaurant : : ${like.Restaurant.name}`);
-          return res.redirect("back");
-        }
+      include: [Restaurant],
+    }).then((like) => {
+      if (like) {
+        console.log(like);
+        req.flash(
+          "error_messages",
+          `Already Like Restaurant : : ${like.Restaurant.name}`
+        );
+        return res.redirect("back");
+      }
 
-        return Like.create({
-          UserId: req.user.id,
-          RestaurantId: req.params.restaurantId
+      return Like.create({
+        UserId: req.user.id,
+        RestaurantId: req.params.restaurantId,
+      }).then(() =>
+        Restaurant.findByPk(req.params.restaurantId).then((restaurant) => {
+          req.flash(
+            "success_messages",
+            `Like  Restaurant : ${restaurant.name}<3`
+          );
+          res.redirect("back");
         })
-          .then(() => Restaurant.findByPk(req.params.restaurantId)
-            .then(restaurant => {
-              req.flash("success_messages", `Like  Restaurant : ${restaurant.name}<3`);
-              res.redirect("back");
-            })
-          )
-      })
+      );
+    });
   },
 
   removeLike: (req, res) => {
@@ -181,17 +181,31 @@ const userController = {
         UserId: req.user.id,
         RestaurantId: req.params.restaurantId,
       },
-      include: [Restaurant]
-    })
-      .then(like =>
-        like.destroy()
-          .then(() => {
-            req.flash("error_messages", `Unlike Restaurant : ${like.Restaurant.name}`);
-            res.redirect("back")
-          })
-      );
-  }
+      include: [Restaurant],
+    }).then((like) =>
+      like.destroy().then(() => {
+        req.flash(
+          "error_messages",
+          `Unlike Restaurant : ${like.Restaurant.name}`
+        );
+        res.redirect("back");
+      })
+    );
+  },
 
+  getTopUser: (req, res) => {
+    return User.findAll({
+      include: [{ model: User, as: "Followers" }],
+    }).then((users) => {
+      users = users.map((user) => ({
+        ...user.dataValues,
+        FollowerCount: user.Followers.length,
+        isFollowed: req.user.Followings.map((item) => item.id).includes(user.id),
+      }));
+      users = users.sort((a, b) => b.FollowerCount - a.FollowerCount);
+      return res.render("topUser", { users: users });
+    });
+  },
 };
 
 module.exports = userController;

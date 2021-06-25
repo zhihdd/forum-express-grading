@@ -5,6 +5,9 @@
   <li class="nav-item">
     <a class="nav-link active" href="/restaurants/feeds">最新動態</a>
   </li>
+  <li class="nav-item">
+    <a class="nav-link" href="/users/top">美食達人</a>
+  </li>
 </ul>
 <br /><br />
 <h1>最新動態</h1>
@@ -24,7 +27,7 @@
             </h4>
             <p>{{this.description}}</p>
             {{moment this.createdAt}}
-            <hr>
+            <hr />
           </div>
         {{/each}}
       </div>
@@ -39,12 +42,16 @@
         {{#each comments}}
           <div>
             <h4>
-              <a href="/restaurants/{{this.Restaurant.id}}">{{this.Restaurant.name}}</a>
+              <a
+                href="/restaurants/{{this.Restaurant.id}}"
+              >{{this.Restaurant.name}}</a>
             </h4>
             <p>{{this.text}}</p>
-            by <a href="/users/{{this.User.id}}">{{this.User.name}}</a>
-            at {{moment this.createdAt}}
-            <hr>
+            by
+            <a href="/users/{{this.User.id}}">{{this.User.name}}</a>
+            at
+            {{moment this.createdAt}}
+            <hr />
           </div>
         {{/each}}
       </div>
