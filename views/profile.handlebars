@@ -1,25 +1,97 @@
-        <div class="card flex-row row w-100 no-gutters mb-5" style="width: 18rem;">
+        <div class="card flex-row row w-100 no-gutters mb-4" style="width: 18rem;">
           <img src="{{profile.image}}" class="col-4 p-2 rounded" alt="...">
           <div class="card-body col-8 d-flex flex-column">
             <h2 class="card-title mb-3">{{profile.name}}</h5>
             <p class="card-text">{{profile.email}}
             </p>
-            {{#ifCond profile.id user.id}}
+            {{#if isUser}}
             <a href="/users/{{profile.id}}/edit" class="btn btn-primary w-25 mt-auto mr-auto">edit</a>
-            {{/ifCond}}
+            {{else}}
+              {{#if isFollowed}}
+            <form class="mt-auto mr-auto" action="/following/{{profile.id}}?_method=DELETE" method="POST">
+              <button class="btn btn-danger ">取消追蹤</button>
+            </form>
+              {{else}}
+            <form class="mt-auto mr-auto" action="/following/{{profile.id}}" method="POST">
+              <button class="btn btn-primary">追蹤</button>
+            </form>
+              {{/if}}
+            {{/if}}
           </div>
         </div>
-      <div class="card w-100">
-        <div class="card-header">
-          {{totalComments}}  已評論餐廳
-        </div>
-        <ul class="row no-gutters card-body list-unstyled">
-          {{#each restaurants}}
-          <li class="col-2">
-            <a href="/restaurants/{{this.id}}">
-            <img class="container-fluid" src="{{this.image}}"  alt="">
-            </a>
+        <ul class="row no-gutters mb-4 p-0 ">
+          <li class="col list-group-item d-flex justify-content-between align-items-center p-2">
+              已追蹤
+            <span class="badge badge-primary badge-pill">{{followings.length}}</span>
           </li>
-          {{/each}}
+          <li class="col list-group-item d-flex justify-content-between align-items-center p-2">
+              被追蹤
+            <span class="badge badge-primary badge-pill">{{followers.length}}</span>
+          </li>
+          <li class="col list-group-item d-flex justify-content-between align-items-center p-2">
+            已評論餐廳
+            <span class="badge badge-primary badge-pill"> {{restaurants.length}}</span>
+          </li>
+         <li class="col list-group-item d-flex justify-content-between align-items-center p-2 ">
+            已收藏餐廳
+            <span class="badge badge-primary badge-pill">{{FavoritedRestaurants.length}}</span>
+          </li>
         </ul>
-      </div>
+        <div class="row no-gutters justify-content-between">
+          <div class="col-4 card p-0 mb-4">
+            <div class="card-header">
+              {{followings.length}} followings 追蹤者
+            </div>
+            <ul class="row no-gutters align-items-center card-body list-unstyled pt-1 pb-1 p-0 m-0">
+              {{#each followings}}
+              <li class="col-3 mb-2">
+                <a href="/users/{{this.id}}">
+                <img class="container-fluid" src="{{this.image}}"  alt="">
+                </a>
+              </li>
+              {{/each}}
+            </ul>
+          </div>
+          <div class="col-7 card p-0 mb-4">
+            <div class="card-header">
+              {{restaurants.length}}  已評論餐廳
+            </div>
+            <ul class="row no-gutters align-items-center card-body list-unstyled pt-1 pb-1 p-0 m-0">
+              {{#each restaurants}}
+              <li class="col-3 mb-2">
+                <a href="/restaurants/{{this.id}}" class="w-100">
+                <img class="container-fluid" src="{{this.image}}"  alt="">
+                </a>
+              </li>
+              {{/each}}
+            </ul>
+          </div>
+          <div class="col-4 card p-0">
+            <div class="card-header">
+              {{followers.length}} followers 追蹤者
+            </div>
+            <ul class="row no-gutters align-items-center card-body list-unstyled pt-1 pb-1 p-0 m-0">
+              {{#each followers}}
+              <li class="col-3 mb-2">
+                <a href="/users/{{this.id}}">
+                <img class="container-fluid" src="{{this.image}}"  alt="">
+                </a>
+              </li>
+              {{/each}}
+            </ul>
+          </div>
+          <div class="col-7 card p-0">
+            <div class="card-header">
+              {{FavoritedRestaurants.length}}  已收藏餐廳
+            </div>
+            <ul class="row no-gutters align-items-center card-body list-unstyled pt-1 pb-1 p-0 m-0">
+              {{#each FavoritedRestaurants}}
+              <li class="col-3 mb-2">
+                <a href="/restaurants/{{this.id}}">
+                <img class="container-fluid" src="{{this.image}}"  alt="">
+                </a>
+              </li>
+              {{/each}}
+            </ul>
+          </div>
+        </div>

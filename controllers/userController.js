@@ -8,7 +8,6 @@ const Like = db.Like;
 const Followship = db.Followship;
 const imgur = require("imgur-node-api");
 const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID;
-
 const userController = {
   signUpPage: (req, res) => {
     return res.render("signup");
@@ -60,23 +59,49 @@ const userController = {
 
   getUser: (req, res) => {
     return User.findByPk(req.params.id, {
-      include: [{ model: Comment, include: [Restaurant] }],
+      include: [
+        { model: Restaurant, as: "FavoritedRestaurants" },
+        { model: User, as: "Followings" },
+        { model: User, as: "Followers" },
+        {
+          model: Comment,
+          include: [Restaurant],
+        },
+      ],
     }).then((user) => {
       user = user.toJSON();
-      const comments = user.Comments;
-      const totalComments = comments.length;
-      const restaurantIndex = {};
-      comments.forEach((element) => {
-        if (!restaurantIndex[element.RestaurantId]) {
-          restaurantIndex[element.RestaurantId] = element.Restaurant;
-        }
+      //following
+      followings = user.Followings;
+      //followers
+      followers = user.Followers;
+      //favoriteRestaurants
+      FavoritedRestaurants = user.FavoritedRestaurants;
+      //comment
+      let comments = user.Comments;
+      restaurants = comments
+        .filter(
+          (comment, i) =>
+            comments
+              .map((item) => item.RestaurantId)
+              .indexOf(comment.RestaurantId) === i
+        )
+        .map((comment) => comment.Restaurant);
+      //add isFollowed
+      const isFollowed = req.user.Followings.map((item) => item.id).includes(
+        +req.params.id
+      );
+      //add isUser
+      const isUser = (+req.user.id === +req.params.id)? true: false
+      //渲染網頁
+      res.render("profile", {
+        profile: user,
+        restaurants,
+        followings,
+        followers,
+        FavoritedRestaurants,
+        isFollowed,
+        isUser,
       });
-      const restaurants = comments
-        .map((item) => item.RestaurantId)
-        .filter((item, index, arr) => arr.indexOf(item) === index)
-        .sort((a, b) => a - b)
-        .map((item) => restaurantIndex[item]);
-      res.render("profile", { profile: user, totalComments, restaurants });
     });
   },
 
@@ -201,7 +226,9 @@ const userController = {
       users = users.map((user) => ({
         ...user.dataValues,
         FollowerCount: user.Followers.length,
-        isFollowed: req.user.Followings.map((item) => item.id).includes(user.id),
+        isFollowed: req.user.Followings.map((item) => item.id).includes(
+          user.id
+        ),
       }));
       users = users.sort((a, b) => b.FollowerCount - a.FollowerCount);
       return res.render("topUser", { users: users });
@@ -209,12 +236,16 @@ const userController = {
   },
 
   addFollowing: (req, res) => {
-    return Followship.create({
-      followerId: req.user.id,
-      followingId: req.params.userId,
-    }).then((followship) => {
-      return res.redirect("back");
-    });
+    if (req.user.id === +req.params.userId){
+      req.flash("error_messages","不能追蹤自己R")
+      return  res.redirect("back");
+    }
+      return Followship.create({
+        followerId: req.user.id,
+        followingId: req.params.userId,
+      }).then((followship) => {
+        return res.redirect("back");
+      });
   },
 
   removeFollowing: (req, res) => {
