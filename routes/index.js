@@ -26,6 +26,7 @@ module.exports = (app, passport) => {
 
   app.get("/", authenticated, (req, res) => res.redirect("/restaurants"));
   app.get("/restaurants", authenticated, restController.getRestaurants);
+  app.get("/restaurants/top", authenticated, restController.getTopRestaurant);
   app.get("/restaurants/feeds", authenticated, restController.getFeeds);
   app.get("/restaurants/:id", authenticated, restController.getRestaurant);
   app.get(
@@ -155,5 +156,12 @@ module.exports = (app, passport) => {
     authenticated,
     upload.single("image"),
     userController.putUser
+  );
+
+  app.post("/following/:userId", authenticated, userController.addFollowing);
+  app.delete(
+    "/following/:userId",
+    authenticated,
+    userController.removeFollowing
   );
 };

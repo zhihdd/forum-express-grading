@@ -1,3 +1,5 @@
+const sequelize = require("sequelize");
+const { Sequelize } = require("../models");
 const db = require("../models");
 const Restaurant = db.Restaurant;
 const Category = db.Category;
@@ -101,7 +103,32 @@ const restController = {
       .then(restaurant => {
         restaurant = restaurant.toJSON();
         res.render("dashboard", { restaurant });
+    });
+  },
+
+  getTopRestaurant: (req, res) => {
+    return Restaurant.findAll({
+      raw: true,
+      nest: true,
+      limit: 10,
+      attributes: {
+        include: [
+          [
+            sequelize.literal(
+              "(select count(*) from Favorites where Favorites.RestaurantId = Restaurant.id)"
+            ),
+            "FavoritedUserCount",
+          ],
+        ],
+      },
+      order: [[sequelize.literal("FavoritedUserCount"), "DESC"]],
+    }).then((restaurants) => {
+      restaurants.forEach(restaurant => {
+        restaurant.isFavorited = req.user.FavoritedRestaurants.map(item => item.id).includes(restaurant.id)
+        restaurant.description = restaurant.description.substring(0, 30);
       })
-  }
+      res.render("topRestaurants", { restaurants });
+    });
+  },
 };
 module.exports = restController;
