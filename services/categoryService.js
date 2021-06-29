@@ -11,5 +11,18 @@ const categoryService = {
       return callback(categories);
     });
   },
+  putCategory: (req, res, callback) => {
+    const id = req.params.id;
+    const name = req.body.name;
+    return Category.findByPk(id)
+      .then((category) => category.update({ name }))
+      .then((category) =>
+        callback({
+          status: "success",
+          message: `更新為 "${category.name}"`,
+        })
+      )
+      .catch((error) => callback({ status: "Error", message: error }));
+  },
 };
 module.exports = categoryService;
