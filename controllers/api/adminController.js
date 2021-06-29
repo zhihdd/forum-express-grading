@@ -19,5 +19,10 @@ const adminController = {
       return res.json(data);
     });
   },
+  postRestaurant: (req, res) => {
+    adminService.postRestaurant(req, res, (data) => {
+      return res.json(data);
+    });
+  },
 };
 module.exports = adminController;
