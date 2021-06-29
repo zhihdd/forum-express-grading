@@ -1,12 +1,12 @@
-const db = require('../../models')
-const Restaurant = db.Restaurant
-const Category = db.Category
+const db = require("../../models");
+const Restaurant = db.Restaurant;
+const Category = db.Category;
 const adminService = require("../../services/adminService");
 const adminController = {
   getRestaurants: (req, res) => {
     adminService.getRestaurants(req, res, (data) => {
       return res.json(data);
-    })
+    });
   },
 
   getRestaurant: (req, res) => {
@@ -14,5 +14,10 @@ const adminController = {
       return res.json(data);
     });
   },
-}
-module.exports = adminController
+  deleteRestaurant: (req, res) => {
+    adminService.deleteRestaurant(req, res, (data) => {
+      return res.json(data);
+    });
+  },
+};
+module.exports = adminController;

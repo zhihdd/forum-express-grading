@@ -11,8 +11,8 @@ const adminService = require("../services/adminService");
 const adminController = {
   getRestaurants: (req, res) => {
     adminService.getRestaurants(req, res, (data) => {
-      return res.render("admin/restaurants", { restaurants: data })
-    })
+      return res.render("admin/restaurants", { restaurants: data });
+    });
   },
 
   createRestaurant: (req, res) => {
@@ -28,7 +28,7 @@ const adminController = {
     }
 
     const { file } = req;
-    console.log(file)
+    console.log(file);
     if (file) {
       imgur.setClientID(IMGUR_CLIENT_ID);
       imgur.upload(file.path, (err, img) => {
@@ -65,9 +65,9 @@ const adminController = {
       return res.render("admin/restaurant", {
         restaurant: data.toJSON(),
       });
-    })
+    });
   },
-  
+
   editRestaurant: (req, res) => {
     Category.findAll({
       raw: true,
@@ -135,10 +135,10 @@ const adminController = {
   },
 
   deleteRestaurant: (req, res) => {
-    return Restaurant.findByPk(req.params.id).then((restaurant) => {
-      restaurant.destroy().then((restaurant) => {
-        res.redirect("/admin/restaurants");
-      });
+    adminService.deleteRestaurant(req, res, (data) => {
+      if (data["status"] === "success") {
+        return res.redirect("/admin/restaurants");
+      }
     });
   },
 
