@@ -24,5 +24,17 @@ const categoryService = {
       )
       .catch((error) => callback({ status: "Error", message: error }));
   },
+  deleteCategory: (req, res, callback) => {
+    const id = req.params.id;
+    return Category.findByPk(id)
+      .then((category) => category.destroy())
+      .then((category) =>
+        callback({
+          status: "success",
+          message: `刪除 "${category.name}" 成功`,
+        })
+      )
+      .catch((error) => callback({ status: "Error", message: error }));
+  },
 };
 module.exports = categoryService;
