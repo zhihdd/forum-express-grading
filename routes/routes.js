@@ -12,7 +12,6 @@ const upload = multer({ dest: "temp/" });
 
 const passport = require("../config/passport");
 
-
 const authenticated = (req, res, next) => {
   if (helpers.ensureAuthenticated(req)) {
     return next();
