@@ -120,5 +120,6 @@ const adminService = {
       });
     }
   },
+
 };
 module.exports = adminService;

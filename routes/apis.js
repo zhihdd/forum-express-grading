@@ -9,7 +9,7 @@ const adminController = require("../controllers/api/adminController");
 const categoryController = require("../controllers/api/categoryController");
 const userController = require("../controllers/api/userController");
 
-const authenticated = passport.authenticate("jwt", {session:false});
+const authenticated = passport.authenticate("jwt", { session: false });
 const authenticatedAdmin = (req, res, next) => {
   if (req.user) {
     if (req.user.isAdmin) {
@@ -81,6 +81,34 @@ router.delete(
 );
 
 //user
+router.get("/users/top", authenticated, userController.getTopUser);
+router.get("/users/:id", authenticated, userController.getUser);
+router.get("/users/:id/edit", authenticated, userController.editUser);
+router.put(
+  "/users/:id",
+  authenticated,
+  upload.single("image"),
+  userController.putUser
+);
+router.post("/following/:userId", authenticated, userController.addFollowing);
+router.delete(
+  "/following/:userId",
+  authenticated,
+  userController.removeFollowing
+);
+router.post(
+  "/favorite/:restaurantId",
+  authenticated,
+  userController.addFavorite
+);
+router.delete(
+  "/favorite/:restaurantId",
+  authenticated,
+  userController.removeFavorite
+);
+
+router.post("/like/:restaurantId", authenticated, userController.addLike);
+router.delete("/like/:restaurantId", authenticated, userController.removeLike);
 router.post("/signin", userController.signIn);
 router.post("/signup", userController.signUp);
 
