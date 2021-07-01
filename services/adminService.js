@@ -1,6 +1,7 @@
 const db = require("../models");
 const Restaurant = db.Restaurant;
 const Category = db.Category;
+const User = db.User;
 const imgur = require("imgur-node-api");
 const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID;
 
@@ -119,6 +120,47 @@ const adminService = {
           });
       });
     }
+  },
+  createRestaurant: (req, res, callback) => {
+    return Category.findAll({raw:true, nest:true})
+    .then(categories => {
+      callback(categories)
+    })
+  },
+  editRestaurant: (req, res, callback) => {
+   return Category.findAll({
+      raw: true,
+      nest: true,
+    }).then((categories) => {
+      return Restaurant.findByPk(req.params.id).then((restaurant) => {
+        callback({
+          categories: categories,
+          restaurant: restaurant.toJSON(),
+        });
+      });
+    });
+  },
+  getUser: (req, res, callback) => {
+    return  User.findAll({ raw: true }).then((users) => {
+      callback({ users });
+    });
+  },
+  toggleAdmin: (req, res, callback) => {
+    const id = req.params.id;
+    return User.findOne({
+      where: {
+        id,
+      },
+    })
+      .then((user) =>
+        user.update({
+          isAdmin: user.isAdmin ? false : true,
+        })
+      )
+      .then((user) => {
+        callback({ status: "success", message: `Change ${user.name} to ${user.isAdmin ? "admin" : "user"}` })
+      })
+      .catch((e) => console.log(e));
   },
 
 };

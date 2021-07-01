@@ -16,8 +16,8 @@ const adminController = {
   },
 
   createRestaurant: (req, res) => {
-    Category.findAll({ raw: true, nest: true }).then((categories) => {
-      return res.render("admin/create", { categories });
+    adminService.createRestaurant(req, res, (data) => {
+      return res.render("admin/create", data);
     });
   },
 
@@ -41,17 +41,9 @@ const adminController = {
   },
 
   editRestaurant: (req, res) => {
-    Category.findAll({
-      raw: true,
-      nest: true,
-    }).then((categories) => {
-      return Restaurant.findByPk(req.params.id).then((restaurant) => {
-        return res.render("admin/create", {
-          categories: categories,
-          restaurant: restaurant.toJSON(),
-        });
-      });
-    });
+    adminService.editRestaurant(req, res, (data) => {
+      return res.render("admin/create", data);
+    })
   },
 
   putRestaurant: (req, res) => {
@@ -74,32 +66,15 @@ const adminController = {
   },
 
   getUsers: (req, res) => {
-    User.findAll({ raw: true }).then((users) => {
-      res.render("admin/restaurants", { users });
-    });
+    adminService.getUser(req, res, (data) => {
+      res.render("admin/restaurants", data);
+    })
   },
 
   toggleAdmin: (req, res) => {
-    const id = req.params.id;
-
-    User.findOne({
-      where: {
-        id,
-      },
+    adminService.toggleAdmin(req, res, (data) => {
+      res.redirect("/admin/users", data);
     })
-      .then((user) =>
-        user.update({
-          isAdmin: user.isAdmin ? false : true,
-        })
-      )
-      .then((user) => {
-        req.flash(
-          "success_messages",
-          `Change ${user.name} to ${user.isAdmin ? "admin" : "user"}`
-        );
-        res.redirect("/admin/users");
-      })
-      .catch((e) => console.log(e));
   },
 };
 

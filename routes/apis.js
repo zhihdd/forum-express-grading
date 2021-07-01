@@ -29,6 +29,12 @@ router.get(
   adminController.getRestaurants
 );
 router.get(
+  "/admin/restaurants/create",
+  authenticated,
+  authenticatedAdmin,
+  adminController.createRestaurant
+);
+router.get(
   "/admin/restaurants/:id",
   authenticated,
   authenticatedAdmin,
@@ -53,6 +59,20 @@ router.put(
   authenticatedAdmin,
   upload.single("image"),
   adminController.putRestaurant
+);
+router.get(
+  "/admin/restaurants/:id/edit",
+  authenticated,
+  authenticatedAdmin,
+  adminController.editRestaurant
+);
+router.get("/admin/users", authenticated,
+  authenticatedAdmin, adminController.getUsers);
+router.put(
+  "/admin/users/:id/toggleAdmin",
+  authenticated,
+  authenticatedAdmin,
+  adminController.toggleAdmin
 );
 ////category
 router.get(
