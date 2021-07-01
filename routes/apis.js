@@ -9,6 +9,7 @@ const adminController = require("../controllers/api/adminController");
 const categoryController = require("../controllers/api/categoryController");
 const userController = require("../controllers/api/userController");
 const commentController = require("../controllers/api/commentController");
+const restController = require("../controllers/api/restController");
 
 const authenticated = passport.authenticate("jwt", { session: false });
 const authenticatedAdmin = (req, res, next) => {
@@ -100,11 +101,21 @@ router.delete(
   authenticatedAdmin,
   categoryController.deleteCategory
 );
+//restaurant
+router.get("/restaurants", authenticated, restController.getRestaurants);
+router.get("/restaurants/top", authenticated, restController.getTopRestaurant);
+router.get("/restaurants/feeds", authenticated, restController.getFeeds);
+router.get("/restaurants/:id", authenticated, restController.getRestaurant);
+router.get(
+  "/restaurants/:id/dashboard",
+  authenticated,
+  restController.getDashboard
+);
 //comment
 router.post("/comments", authenticated, commentController.postComment);
 router.delete(
   "/comments/:id",
-  authenticated,authenticatedAdmin,
+  authenticated, authenticatedAdmin,
   commentController.deleteComment
 );
 //user
